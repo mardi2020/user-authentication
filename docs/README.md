@@ -1,4 +1,13 @@
-### 프로그램 진행
+### 사용자 인증 시스템 프로젝트
+- - -
+#### 기술 스택
+- language: Java17
+- Framework: Springboot 3.0.0
+- Template Engine: Thymeleaf
+- Database: MySQL, Redis
+- DevOps: Docker, k8s
+
+#### 프로그램 진행
 - - -
 | 날짜 | 분류 | 해야하는 일 | 확인 |
 | --- | --- | --- | --- |
