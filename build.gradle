@@ -1,0 +1,67 @@
+plugins {
+    id 'java'
+    id 'org.springframework.boot' version '3.0.0'
+    id 'io.spring.dependency-management' version '1.1.0'
+    id 'org.hibernate.orm' version '6.1.5.Final'
+    id 'org.graalvm.buildtools.native' version '0.9.18'
+}
+
+group = 'com.mardi2020'
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = '17'
+
+configurations {
+    compileOnly {
+        extendsFrom annotationProcessor
+    }
+}
+
+
+repositories {
+    maven {
+        url "https://repo.spring.io/milestone"
+        content {
+            // Thymeleaf 3.1.0 uses 6.0.0-RC2 of Security's bom in its dependency management
+            includeModule("org.springframework.security", "spring-security-bom")
+        }
+    }
+
+    mavenCentral()
+}
+
+dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+    implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
+    implementation 'org.springframework.boot:spring-boot-starter-security'
+    implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.thymeleaf.extras:thymeleaf-extras-springsecurity6'
+    compileOnly 'org.projectlombok:lombok'
+    runtimeOnly 'com.mysql:mysql-connector-j'
+    annotationProcessor 'org.projectlombok:lombok'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'org.springframework.security:spring-security-test'
+
+    // https://mvnrepository.com/artifact/io.jsonwebtoken/jjwt
+    implementation 'io.jsonwebtoken:jjwt:0.9.1'
+    // https://mvnrepository.com/artifact/javax.xml.bind/jaxb-api
+    implementation 'javax.xml.bind:jaxb-api:2.3.1'
+    // https://mvnrepository.com/artifact/org.apache.commons/commons-email
+    implementation 'org.apache.commons:commons-email:1.5'
+
+}
+
+tasks.named('test') {
+    useJUnitPlatform()
+}
+
+hibernate {
+    enhancement {
+        lazyInitialization true
+        dirtyTracking true
+        associationManagement true
+    }
+}
+
