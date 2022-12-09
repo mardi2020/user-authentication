@@ -1,0 +1,6 @@
+rootProject.name = 'smgDevCamp'
+
+include 'eurekaDiscovery'
+include 'apiGateway'
+include 'user-service'
+include 'join-service'
