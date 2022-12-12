@@ -10,6 +10,9 @@ eureka:
   instance:
     instance-id: ${spring.application.name}:${spring.application.instance_id:${random.value}}
 
+token:
+  secret: token_key
+
 spring:
   application:
     name: apigateway-service
@@ -48,6 +51,7 @@ spring:
           filters:
             - RemoveRequestHeader=Cookie
             - RewritePath=/user-service/(?<segment>.*), /$\{segment}
+            - AuthorizationHeaderFilter
 
         - id: join-service
           uri: lb://JOIN-SERVICE
