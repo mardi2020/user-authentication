@@ -6,6 +6,7 @@ import com.mardi2020.userservice.dto.response.FindResultDto;
 import com.mardi2020.userservice.dto.response.JoinResultDto;
 import com.mardi2020.userservice.dto.response.UserDto;
 import com.mardi2020.userservice.dto.response.UserInfoDto;
+import com.mardi2020.userservice.exception.UserNotFoundException;
 import com.mardi2020.userservice.service.UserService;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -76,6 +77,16 @@ public class UserController {
                     .success(false)
                     .message(e.getMessage())
                     .build(), HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @GetMapping("/email")
+    ResponseEntity<String> getEmail(@RequestParam String name) {
+        try {
+            String email = userService.getEmailByName(name);
+            return new ResponseEntity<>(email, HttpStatus.OK);
+        } catch (UserNotFoundException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.OK);
         }
     }
 }

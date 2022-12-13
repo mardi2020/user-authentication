@@ -6,4 +6,6 @@ import org.springframework.http.ResponseEntity;
 
 public interface InfoService {
     ResponseEntity<UserInfoDto> findPassword(ChangePwDto changePwDto);
+
+    String findEmail(String name);
 }

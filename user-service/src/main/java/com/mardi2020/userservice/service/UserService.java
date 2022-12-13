@@ -16,4 +16,6 @@ public interface UserService extends UserDetailsService {
     List<UserInfoDto> getUserAll();
 
     FindResultDto changePassword(ChangePwDto changePwDto);
+
+    String getEmailByName(String name);
 }

@@ -16,6 +16,9 @@ token:
 spring:
   application:
     name: apigateway-service
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher
   cloud:
     gateway:
       default-filters:
@@ -46,8 +49,26 @@ spring:
         - id: user-service
           uri: lb://USER-SERVICE
           predicates:
+            - Path=/user-service/users/status
+            - Method=GET
+          filters:
+            - RemoveRequestHeader=Cookie
+            - RewritePath=/user-service/(?<segment>.*), /$\{segment}
+
+        - id: user-service
+          uri: lb://USER-SERVICE
+          predicates:
             - Path=/user-service/users/password
             - Method=PUT
+          filters:
+            - RemoveRequestHeader=Cookie
+            - RewritePath=/user-service/(?<segment>.*), /$\{segment}
+
+        - id: user-service
+          uri: lb://USER-SERVICE
+          predicates:
+            - Path=/user-service/users/email
+            - Method=GET
           filters:
             - RemoveRequestHeader=Cookie
             - RewritePath=/user-service/(?<segment>.*), /$\{segment}
@@ -71,20 +92,20 @@ spring:
             - RemoveRequestHeader=Cookie
             - RewritePath=/join-service/(?<segment>.*), /$\{segment}
 
-        - id: join-service
-          uri: lb://JOIN-SERVICE
-          predicates:
-            - Path=/join-service/**
-            - Method=GET
-          filters:
-            - RemoveRequestHeader=Cookie
-            - RewritePath=/join-service/(?<segment>.*), /$\{segment}
-
         - id: find-info-service
           uri: lb://FIND-INFO-SERVICE
           predicates:
             - Path=/find-info-service/**
             - Method=PATCH
+          filters:
+            - RemoveRequestHeader=Cookie
+            - RewritePath=/find-info-service/(?<segment>.*), /$\{segment}
+
+        - id: find-info-service
+          uri: lb://FIND-INFO-SERVICE
+          predicates:
+            - Path=/find-info-service/**
+            - Method=GET
           filters:
             - RemoveRequestHeader=Cookie
             - RewritePath=/find-info-service/(?<segment>.*), /$\{segment}

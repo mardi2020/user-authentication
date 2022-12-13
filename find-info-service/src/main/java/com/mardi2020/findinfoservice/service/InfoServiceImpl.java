@@ -4,8 +4,10 @@ import com.mardi2020.findinfoservice.client.UserServiceClient;
 import com.mardi2020.findinfoservice.dto.request.ChangePwDto;
 import com.mardi2020.findinfoservice.dto.response.UserInfoDto;
 import com.mardi2020.findinfoservice.exception.EmailNotFoundException;
+import com.mardi2020.findinfoservice.exception.NameNotFoundException;
 import com.mardi2020.findinfoservice.repository.InfoRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -24,6 +26,16 @@ public class InfoServiceImpl implements InfoService {
             throw new EmailNotFoundException("[ERROR] INFO DOES NOT MATCH");
         }
         return res;
+    }
+
+    @Override
+    public String findEmail(String name) {
+        ResponseEntity<String> result = userServiceClient.getEmail(name);
+        String email = result.getBody();
+        if (result.getStatusCode() != HttpStatus.OK || email == null) {
+            throw new NameNotFoundException("[ERROR] USER NOT FOUND");
+        }
+        return email;
     }
 
 }

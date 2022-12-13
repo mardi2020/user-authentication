@@ -13,7 +13,6 @@ import com.mardi2020.userservice.repository.UserRepository;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
@@ -93,6 +92,15 @@ public class UserServiceImpl implements UserService {
                 .success(false)
                 .message("비밀번호 변경 실패")
                 .build();
+    }
+
+    @Override
+    public String getEmailByName(String name) {
+        UserEntity user = userRepository.findByName(name);
+        if (user.getEmail() == null) {
+            throw new UserNotFoundException("[ERROR] USER NOT FOUND");
+        }
+        return user.getEmail();
     }
 
     public static final class CustomUserDetails extends UserEntity implements UserDetails {
