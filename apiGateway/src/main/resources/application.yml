@@ -46,6 +46,15 @@ spring:
         - id: user-service
           uri: lb://USER-SERVICE
           predicates:
+            - Path=/user-service/users/password
+            - Method=PUT
+          filters:
+            - RemoveRequestHeader=Cookie
+            - RewritePath=/user-service/(?<segment>.*), /$\{segment}
+
+        - id: user-service
+          uri: lb://USER-SERVICE
+          predicates:
             - Path=/user-service/**
             - Method=GET
           filters:
@@ -70,3 +79,12 @@ spring:
           filters:
             - RemoveRequestHeader=Cookie
             - RewritePath=/join-service/(?<segment>.*), /$\{segment}
+
+        - id: find-info-service
+          uri: lb://FIND-INFO-SERVICE
+          predicates:
+            - Path=/find-info-service/**
+            - Method=PATCH
+          filters:
+            - RemoveRequestHeader=Cookie
+            - RewritePath=/find-info-service/(?<segment>.*), /$\{segment}

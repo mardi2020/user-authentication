@@ -1,15 +1,19 @@
 package com.mardi2020.userservice.service;
 
+import com.mardi2020.userservice.dto.request.ChangePwDto;
 import com.mardi2020.userservice.dto.request.JoinDto;
+import com.mardi2020.userservice.dto.response.FindResultDto;
 import com.mardi2020.userservice.dto.response.JoinResultDto;
 import com.mardi2020.userservice.dto.response.UserDto;
 import com.mardi2020.userservice.dto.response.UserInfoDto;
+import com.mardi2020.userservice.exception.PasswordNotValidException;
 import com.mardi2020.userservice.exception.UserNotFoundException;
 import com.mardi2020.userservice.repository.UserEntity;
 import com.mardi2020.userservice.repository.UserRepository;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
@@ -64,6 +68,31 @@ public class UserServiceImpl implements UserService {
     public List<UserInfoDto> getUserAll() {
         List<UserEntity> users = userRepository.findAll();
         return users.stream().map(UserInfoDto::new).collect(Collectors.toList());
+    }
+
+    @Override
+    @Transactional
+    public FindResultDto changePassword(ChangePwDto changePwDto) {
+        String email = changePwDto.getEmail();
+        String name = changePwDto.getName();
+        UserEntity user = userRepository.findByEmail(changePwDto.getEmail());
+        if (user.getEmail().equals(email) && user.getName().equals(name)) {
+            String password = changePwDto.getPassword();
+            if (password.length() < 8) {
+                throw new PasswordNotValidException("[ERROR] PW NOT VALID");
+            }
+            user.updatePassword(passwordEncoder.encode(changePwDto.getPassword()));
+            userRepository.save(user);
+
+            return FindResultDto.builder()
+                    .success(true)
+                    .message(email + "CHANGE SUCCESS")
+                    .build();
+        }
+        return FindResultDto.builder()
+                .success(false)
+                .message("비밀번호 변경 실패")
+                .build();
     }
 
     public static final class CustomUserDetails extends UserEntity implements UserDetails {
