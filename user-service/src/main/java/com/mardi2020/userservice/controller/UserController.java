@@ -31,7 +31,7 @@ public class UserController {
 
     private final Environment env;
 
-    @GetMapping
+    @GetMapping("/status")
     public String status() {
         return String.format("It is working in User service on PORT %s", env.getProperty("local.server.port"));
     }
@@ -68,10 +68,8 @@ public class UserController {
 
     @PutMapping("/password")
     ResponseEntity<FindResultDto> changePassword(@RequestBody ChangePwDto changePwDto) {
-        log.error("User Service - " + changePwDto.toString());
         try {
             FindResultDto result = userService.changePassword(changePwDto);
-            log.error(result.toString());
             return new ResponseEntity<>(result, HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>(FindResultDto.builder()
