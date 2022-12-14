@@ -62,8 +62,7 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
             LoginDto creds = new ObjectMapper().readValue(request.getInputStream(), LoginDto.class);
             UserDetails user = userService.loadUserByUsername(creds.getEmail());
             return getAuthenticationManager().authenticate(
-                    new UsernamePasswordAuthenticationToken(user, creds.getPassword(), Collections.unmodifiableList(
-                            AuthorityUtils.createAuthorityList("ROLE_USER"))));
+                    new UsernamePasswordAuthenticationToken(user, creds.getPassword(), user.getAuthorities()));
         } catch (Exception e) {
             throw new RuntimeException("[ERROR] LOGIN FAIL");
         }
