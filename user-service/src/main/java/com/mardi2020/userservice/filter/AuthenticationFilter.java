@@ -42,10 +42,12 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
     @Override
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain,
                                             Authentication authResult) throws IOException, ServletException {
+
         String email = ((CustomUserDetails) authResult.getPrincipal()).getUsername();
         UserDto user = userService.getUserByEmail(email);
         String token = Jwts.builder()
                 .setSubject(user.getUserId().toString())
+                .claim("role", user.getRole())
                 .setExpiration(new Date(System.currentTimeMillis() +
                         Long.parseLong(env.getProperty("token.expiration_time"))))
                 .signWith(SignatureAlgorithm.HS512, env.getProperty("token.secret"))

@@ -18,9 +18,12 @@ public class UserDto {
 
     private String name;
 
+    private String role;
+
     public UserDto(UserEntity user) {
         this.userId = user.getId();
         this.email = user.getEmail();
         this.name = user.getName();
+        this.role = user.getRoles();
     }
 }

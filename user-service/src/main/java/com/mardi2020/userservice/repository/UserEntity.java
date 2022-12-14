@@ -39,11 +39,12 @@ public class UserEntity {
     }
 
     @Builder
-    public UserEntity(Long id, String email, String password, String name) {
+    public UserEntity(Long id, String email, String password, String name, String roles) {
         this.id = id;
         this.email = email;
         this.password = password;
         this.name = name;
+        this.roles = roles;
     }
 
     public void updatePassword(String password) {

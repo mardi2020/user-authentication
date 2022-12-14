@@ -7,14 +7,20 @@ import com.mardi2020.userservice.dto.response.JoinResultDto;
 import com.mardi2020.userservice.dto.response.UserDto;
 import com.mardi2020.userservice.dto.response.UserInfoDto;
 import com.mardi2020.userservice.exception.PasswordNotValidException;
+import com.mardi2020.userservice.exception.TokenNotValidException;
 import com.mardi2020.userservice.exception.UserNotFoundException;
 import com.mardi2020.userservice.repository.UserEntity;
 import com.mardi2020.userservice.repository.UserRepository;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jws;
+import io.jsonwebtoken.Jwts;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.core.env.Environment;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -23,12 +29,15 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
+
+    private final Environment env;
 
     private final BCryptPasswordEncoder passwordEncoder;
 
@@ -64,7 +73,11 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<UserInfoDto> getUserAll() {
+    public List<UserInfoDto> getUserAll(String token) {
+        String role = jwtParseRole(token.replace("Bearer ", ""));
+        if (role == null || !role.equals("ROLE_ADMIN")) {
+            throw new TokenNotValidException("권한이 없습니다.");
+        }
         List<UserEntity> users = userRepository.findAll();
         return users.stream().map(UserInfoDto::new).collect(Collectors.toList());
     }
@@ -103,17 +116,27 @@ public class UserServiceImpl implements UserService {
         return user.getEmail();
     }
 
-    public static final class CustomUserDetails extends UserEntity implements UserDetails {
-        private static final List<GrantedAuthority> ROLE_USER = Collections
-                .unmodifiableList(AuthorityUtils.createAuthorityList("ROLE_USER"));
+    private String jwtParseRole(String token) {
+        try {
+            Jws<Claims> claims = Jwts.parser()
+                    .setSigningKey(env.getProperty("token.secret"))
+                    .parseClaimsJws(token);
 
+            return claims.getBody().get("role").toString();
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    public static final class CustomUserDetails extends UserEntity implements UserDetails {
         CustomUserDetails(UserEntity user) {
-            super(user.getId(), user.getEmail(), user.getPassword(), user.getName());
+            super(user.getId(), user.getEmail(), user.getPassword(), user.getName(), user.getRoles());
         }
 
         @Override
         public Collection<? extends GrantedAuthority> getAuthorities() {
-            return ROLE_USER;
+            return Collections
+                    .unmodifiableList(AuthorityUtils.createAuthorityList(super.getRoles()));
         }
 
         @Override

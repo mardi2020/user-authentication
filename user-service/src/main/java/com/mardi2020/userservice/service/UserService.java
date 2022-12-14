@@ -13,7 +13,7 @@ public interface UserService extends UserDetailsService {
     JoinResultDto join(JoinDto joinDto);
     UserDto getUserByUserId(Long userId);
     UserDto getUserByEmail(String userName);
-    List<UserInfoDto> getUserAll();
+    List<UserInfoDto> getUserAll(String token);
 
     FindResultDto changePassword(ChangePwDto changePwDto);
 
