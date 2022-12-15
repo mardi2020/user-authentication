@@ -7,13 +7,9 @@ import com.mardi2020.userservice.dto.response.JoinResultDto;
 import com.mardi2020.userservice.dto.response.UserDto;
 import com.mardi2020.userservice.dto.response.UserInfoDto;
 import com.mardi2020.userservice.exception.PasswordNotValidException;
-import com.mardi2020.userservice.exception.TokenNotValidException;
 import com.mardi2020.userservice.exception.UserNotFoundException;
 import com.mardi2020.userservice.repository.UserEntity;
 import com.mardi2020.userservice.repository.UserRepository;
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jws;
-import io.jsonwebtoken.Jwts;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -73,11 +69,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<UserInfoDto> getUserAll(String token) {
-        String role = jwtParseRole(token.replace("Bearer ", ""));
-        if (role == null || !role.equals("ROLE_ADMIN")) {
-            throw new TokenNotValidException("권한이 없습니다.");
-        }
+    public List<UserInfoDto> getUserAll() {
         List<UserEntity> users = userRepository.findAll();
         return users.stream().map(UserInfoDto::new).collect(Collectors.toList());
     }
@@ -114,18 +106,6 @@ public class UserServiceImpl implements UserService {
             throw new UserNotFoundException("[ERROR] USER NOT FOUND");
         }
         return user.getEmail();
-    }
-
-    private String jwtParseRole(String token) {
-        try {
-            Jws<Claims> claims = Jwts.parser()
-                    .setSigningKey(env.getProperty("token.secret"))
-                    .parseClaimsJws(token);
-
-            return claims.getBody().get("role").toString();
-        } catch (Exception e) {
-            return null;
-        }
     }
 
     public static final class CustomUserDetails extends UserEntity implements UserDetails {

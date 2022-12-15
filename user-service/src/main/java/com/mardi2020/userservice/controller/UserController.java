@@ -18,7 +18,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -59,9 +58,9 @@ public class UserController {
     }
 
     @GetMapping("/all")
-    public ResponseEntity<?> getUserAll(@RequestHeader("Authorization") String token) {
+    public ResponseEntity<?> getUserAll() {
         try {
-            List<UserInfoDto> userAll = userService.getUserAll(token);
+            List<UserInfoDto> userAll = userService.getUserAll();
             return new ResponseEntity<>(userAll, HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.FORBIDDEN);
