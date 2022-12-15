@@ -1,7 +1,6 @@
 package com.mardi202.apigateway.filter;
 
 import io.jsonwebtoken.Jwts;
-import java.util.Objects;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
 import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFactory;
@@ -29,22 +28,26 @@ public class AuthorizationHeaderFilter extends AbstractGatewayFilterFactory<Auth
     public GatewayFilter apply(Config config) {
         return ((exchange, chain) -> {
             ServerHttpRequest request = exchange.getRequest();
+            log.info("[Request Headers]: " + request.getHeaders());
+            if (!request.getHeaders().containsKey(HttpHeaders.AUTHORIZATION)) {
+                return onError(exchange, "No authorization header");
+            }
 
-            String authorizationHeader = Objects
-                    .requireNonNull(request.getHeaders().get(HttpHeaders.AUTHORIZATION)).get(0);
+            String authorizationHeader = request.getHeaders().get(HttpHeaders.AUTHORIZATION).get(0);
+            log.error("[authorizationHeader] " + authorizationHeader);
             String token = authorizationHeader.replace("Bearer", "");
 
             if (!isJwtValid(token)) {
-                return onError(exchange);
+                return onError(exchange, "JWT not valid");
             }
             return chain.filter(exchange);
         });
     }
 
-    private Mono<Void> onError(ServerWebExchange exchange) {
+    private Mono<Void> onError(ServerWebExchange exchange, String message) {
         ServerHttpResponse response = exchange.getResponse();
         response.setStatusCode(HttpStatus.UNAUTHORIZED);
-        log.error("JWT not valid");
+        log.error(message);
         return response.setComplete();
     }
 
