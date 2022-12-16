@@ -49,15 +49,6 @@ spring:
         - id: user-service
           uri: lb://USER-SERVICE
           predicates:
-            - Path=/user-service/users/status
-            - Method=GET
-          filters:
-            - RemoveRequestHeader=Cookie
-            - RewritePath=/user-service/(?<segment>.*), /$\{segment}
-
-        - id: user-service
-          uri: lb://USER-SERVICE
-          predicates:
             - Path=/user-service/users/password
             - Method=PUT
           filters:
@@ -94,6 +85,17 @@ spring:
             - RewritePath=/user-service/(?<segment>.*), /$\{segment}
             - AuthorizationHeaderFilter
 
+        - id: user-service
+          uri: lb://USER-SERVICE
+          predicates:
+            - Path=/user-service/users
+            - Method=DELETE
+          filters:
+            - RemoveRequestHeader=Cookie
+            - RewritePath=/user-service/(?<segment>.*), /$\{segment}
+            - AuthorizationHeaderFilter
+
+
         - id: join-service
           uri: lb://JOIN-SERVICE
           predicates:
@@ -102,6 +104,16 @@ spring:
           filters:
             - RemoveRequestHeader=Cookie
             - RewritePath=/join-service/(?<segment>.*), /$\{segment}
+
+        - id: join-service
+          uri: lb://JOIN-SERVICE
+          predicates:
+            - Path=/join-service/leave
+            - Method=DELETE
+          filters:
+            - RemoveRequestHeader=Cookie
+            - RewritePath=/join-service/(?<segment>.*), /$\{segment}
+            - AuthorizationHeaderFilter
 
         - id: find-info-service
           uri: lb://FIND-INFO-SERVICE
@@ -120,6 +132,7 @@ spring:
           filters:
             - RemoveRequestHeader=Cookie
             - RewritePath=/find-info-service/(?<segment>.*), /$\{segment}
+            - AuthorizationHeaderFilter
 
         - id: user-manage-service
           uri: lb://USER-MANAGE-SERVICE
