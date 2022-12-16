@@ -4,12 +4,16 @@ import com.mardi2020.userservice.dto.request.ChangePwDto;
 import com.mardi2020.userservice.dto.request.JoinDto;
 import com.mardi2020.userservice.dto.response.FindResultDto;
 import com.mardi2020.userservice.dto.response.JoinResultDto;
+import com.mardi2020.userservice.dto.response.LeaveResultDto;
 import com.mardi2020.userservice.dto.response.UserDto;
 import com.mardi2020.userservice.dto.response.UserInfoDto;
 import com.mardi2020.userservice.exception.PasswordNotValidException;
 import com.mardi2020.userservice.exception.UserNotFoundException;
 import com.mardi2020.userservice.repository.UserEntity;
 import com.mardi2020.userservice.repository.UserRepository;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jws;
+import io.jsonwebtoken.Jwts;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -69,6 +73,27 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public Long getUserIdByToken(String token) {
+        token = token.replace("Bearer ", "");
+        try {
+            String userId = Jwts.parser()
+                    .setSigningKey(env.getProperty("token.secret"))
+                    .parseClaimsJws(token).getBody().getSubject();
+            return Long.valueOf(userId);
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    public UserDto getMyInfo(String token) {
+        Long userId = getUserIdByToken(token);
+        if (userId == null) {
+            throw new UserNotFoundException("userId를 찾을 수 없습니다.");
+        }
+        return getUserByUserId(userId);
+    }
+
+    @Override
     public List<UserInfoDto> getUserAll() {
         List<UserEntity> users = userRepository.findAll();
         return users.stream().map(UserInfoDto::new).collect(Collectors.toList());
@@ -106,6 +131,26 @@ public class UserServiceImpl implements UserService {
             throw new UserNotFoundException("[ERROR] USER NOT FOUND");
         }
         return user.getEmail();
+    }
+
+    @Override
+    @Transactional
+    public LeaveResultDto deleteUser(String token) {
+        Long userId = getUserIdByToken(token);
+        if (userId == null) {
+            throw new UserNotFoundException("userId를 찾을 수 없습니다.");
+        }
+        log.error(userId.toString());
+        UserEntity user = userRepository.findById(userId).orElseThrow(
+                () -> new UserNotFoundException("user가 존재하지 않습니다.")
+        );
+
+        userRepository.delete(user);
+
+        return LeaveResultDto.builder()
+                .email(user.getEmail())
+                .name(user.getName())
+                .build();
     }
 
     public static final class CustomUserDetails extends UserEntity implements UserDetails {
