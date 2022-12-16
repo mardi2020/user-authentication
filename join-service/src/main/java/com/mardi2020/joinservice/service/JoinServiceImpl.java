@@ -3,12 +3,14 @@ package com.mardi2020.joinservice.service;
 import com.mardi2020.joinservice.client.UserServiceClient;
 import com.mardi2020.joinservice.dto.request.JoinDto;
 import com.mardi2020.joinservice.dto.response.JoinResultDto;
+import com.mardi2020.joinservice.dto.response.LeaveResultDto;
 import com.mardi2020.joinservice.exception.EmailDuplicatedException;
 import com.mardi2020.joinservice.exception.NicknameDuplicatedException;
 import com.mardi2020.joinservice.exception.PasswordNotValidException;
 import com.mardi2020.joinservice.repository.Join;
 import com.mardi2020.joinservice.repository.JoinRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -38,5 +40,20 @@ public class JoinServiceImpl implements JoinService {
 
         ResponseEntity<JoinResultDto> response = userServiceClient.postUser(joinDto);
         return response.getBody();
+    }
+
+    @Override
+    public void leave(String token) {
+        ResponseEntity<LeaveResultDto> result = userServiceClient.deleteUser(token);
+
+        if (result.getStatusCode() != HttpStatus.OK) {
+            throw new RuntimeException("회원 탈퇴에 실패했습니다.");
+        }
+
+        String email = result.getBody().getEmail();
+        String name = result.getBody().getName();
+
+        joinRepository.deleteById(email);
+        joinRepository.deleteById(name);
     }
 }

@@ -6,4 +6,6 @@ import com.mardi2020.joinservice.dto.response.JoinResultDto;
 public interface JoinService {
 
     JoinResultDto join(JoinDto joinDto);
+
+    void leave(String token);
 }
