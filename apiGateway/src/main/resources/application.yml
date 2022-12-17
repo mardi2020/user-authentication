@@ -21,6 +21,17 @@ spring:
       matching-strategy: ant_path_matcher
   cloud:
     gateway:
+      globalcors:
+        cors-configurations:
+          '[/**]':
+            allowedOrigins: "http://localhost:3000"
+            allowdMethods:
+              - POST
+              - GET
+              - PUT
+              - PATCH
+              - DELETE
+              - OPTIONS
       default-filters:
         - name: GlobalFilter
           args:
@@ -54,6 +65,7 @@ spring:
           filters:
             - RemoveRequestHeader=Cookie
             - RewritePath=/user-service/(?<segment>.*), /$\{segment}
+            - AuthorizationHeaderFilter
 
         - id: user-service
           uri: lb://USER-SERVICE
@@ -63,6 +75,7 @@ spring:
           filters:
             - RemoveRequestHeader=Cookie
             - RewritePath=/user-service/(?<segment>.*), /$\{segment}
+            - AuthorizationHeaderFilter
 
         - id: user-service
           uri: lb://USER-SERVICE
@@ -78,23 +91,12 @@ spring:
         - id: user-service
           uri: lb://USER-SERVICE
           predicates:
-            - Path=/user-service/**
-            - Method=GET
-          filters:
-            - RemoveRequestHeader=Cookie
-            - RewritePath=/user-service/(?<segment>.*), /$\{segment}
-            - AuthorizationHeaderFilter
-
-        - id: user-service
-          uri: lb://USER-SERVICE
-          predicates:
             - Path=/user-service/users
             - Method=DELETE
           filters:
             - RemoveRequestHeader=Cookie
             - RewritePath=/user-service/(?<segment>.*), /$\{segment}
             - AuthorizationHeaderFilter
-
 
         - id: join-service
           uri: lb://JOIN-SERVICE
@@ -119,20 +121,10 @@ spring:
           uri: lb://FIND-INFO-SERVICE
           predicates:
             - Path=/find-info-service/**
-            - Method=PATCH
+            - Method=PATCH,GET
           filters:
             - RemoveRequestHeader=Cookie
             - RewritePath=/find-info-service/(?<segment>.*), /$\{segment}
-
-        - id: find-info-service
-          uri: lb://FIND-INFO-SERVICE
-          predicates:
-            - Path=/find-info-service/**
-            - Method=GET
-          filters:
-            - RemoveRequestHeader=Cookie
-            - RewritePath=/find-info-service/(?<segment>.*), /$\{segment}
-            - AuthorizationHeaderFilter
 
         - id: user-manage-service
           uri: lb://USER-MANAGE-SERVICE
