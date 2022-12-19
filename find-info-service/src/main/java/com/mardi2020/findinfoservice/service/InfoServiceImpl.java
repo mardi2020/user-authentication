@@ -44,7 +44,7 @@ public class InfoServiceImpl implements InfoService {
         return email;
     }
 
-    @Cacheable(key = "#id", cacheNames = "user")
+    @Cacheable(key = "#id", cacheNames = "user", cacheManager = "cacheManager")
     @Override
     public UserDto getUserInfo(String token, Long id) {
         ResponseEntity<UserDto> userInfo = userServiceClient.getUserInfo(token);
@@ -54,7 +54,7 @@ public class InfoServiceImpl implements InfoService {
         return userInfo.getBody();
     }
 
-    @CacheEvict(key = "#id", cacheNames = "user")
+    @CacheEvict(key = "#id", cacheNames = "user", cacheManager = "cacheManager")
     @Override
     public UserInfoDto updateUserName(String token, UpdateNameDto updateNameDto, Long id) {
         ResponseEntity<String> res = userServiceClient.changeName(token, updateNameDto);
