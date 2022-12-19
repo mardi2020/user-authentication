@@ -2,6 +2,7 @@ package com.mardi2020.userservice.service;
 
 import com.mardi2020.userservice.dto.request.ChangePwDto;
 import com.mardi2020.userservice.dto.request.JoinDto;
+import com.mardi2020.userservice.dto.request.UpdateNameDto;
 import com.mardi2020.userservice.dto.response.FindResultDto;
 import com.mardi2020.userservice.dto.response.JoinResultDto;
 import com.mardi2020.userservice.dto.response.LeaveResultDto;
@@ -11,8 +12,6 @@ import com.mardi2020.userservice.exception.PasswordNotValidException;
 import com.mardi2020.userservice.exception.UserNotFoundException;
 import com.mardi2020.userservice.repository.UserEntity;
 import com.mardi2020.userservice.repository.UserRepository;
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
 import java.util.Collection;
 import java.util.Collections;
@@ -151,6 +150,19 @@ public class UserServiceImpl implements UserService {
                 .email(user.getEmail())
                 .name(user.getName())
                 .build();
+    }
+
+    @Override
+    @Transactional
+    public String updateName(UpdateNameDto updateNameDto) {
+        Long id = updateNameDto.getId();
+        UserEntity user = userRepository.findById(id).orElseThrow(
+                () -> new UserNotFoundException("user not found")
+        );
+
+        user.updateName(updateNameDto.getName());
+        UserEntity saved = userRepository.save(user);
+        return saved.getName();
     }
 
     public static final class CustomUserDetails extends UserEntity implements UserDetails {

@@ -2,6 +2,7 @@ package com.mardi2020.userservice.service;
 
 import com.mardi2020.userservice.dto.request.ChangePwDto;
 import com.mardi2020.userservice.dto.request.JoinDto;
+import com.mardi2020.userservice.dto.request.UpdateNameDto;
 import com.mardi2020.userservice.dto.response.FindResultDto;
 import com.mardi2020.userservice.dto.response.JoinResultDto;
 import com.mardi2020.userservice.dto.response.LeaveResultDto;
@@ -22,4 +23,6 @@ public interface UserService extends UserDetailsService {
 
     String getEmailByName(String name);
     LeaveResultDto deleteUser(String token);
+
+    String updateName(UpdateNameDto updateNameDto);
 }

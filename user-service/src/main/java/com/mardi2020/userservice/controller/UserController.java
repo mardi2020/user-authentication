@@ -2,6 +2,7 @@ package com.mardi2020.userservice.controller;
 
 import com.mardi2020.userservice.dto.request.ChangePwDto;
 import com.mardi2020.userservice.dto.request.JoinDto;
+import com.mardi2020.userservice.dto.request.UpdateNameDto;
 import com.mardi2020.userservice.dto.response.FindResultDto;
 import com.mardi2020.userservice.dto.response.JoinResultDto;
 import com.mardi2020.userservice.dto.response.LeaveResultDto;
@@ -90,5 +91,12 @@ public class UserController {
         } catch (UserNotFoundException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.OK);
         }
+    }
+
+    @PutMapping("/name")
+    ResponseEntity<String> updateName(@RequestBody UpdateNameDto updateNameDto) {
+        log.info(updateNameDto.toString());
+        String name = userService.updateName(updateNameDto);
+        return new ResponseEntity<>(name, HttpStatus.OK);
     }
 }
