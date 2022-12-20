@@ -2,7 +2,6 @@ package com.mardi2020.joinservice.client;
 
 import com.mardi2020.joinservice.dto.request.JoinDto;
 import com.mardi2020.joinservice.dto.response.JoinResultDto;
-import com.mardi2020.joinservice.dto.response.LeaveResultDto;
 import feign.Headers;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.HttpHeaders;
@@ -20,5 +19,5 @@ public interface UserServiceClient {
 
     @DeleteMapping("/user-service/users")
     @Headers("Authorization: {token}")
-    ResponseEntity<LeaveResultDto> deleteUser(@RequestHeader(HttpHeaders.AUTHORIZATION) String token);
+    ResponseEntity<String> deleteUser(@RequestHeader(HttpHeaders.AUTHORIZATION) String token);
 }

@@ -15,4 +15,6 @@ public interface GroupUsersRepository extends CrudRepository<GroupUsers, Long> {
     GroupUsers findByGroupEntityAndUserId(GroupEntity groupId, Long userId);
 
     int countByGroupEntity(GroupEntity groupEntity);
+
+    GroupUsers findByUserId(Long userId);
 }

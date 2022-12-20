@@ -22,7 +22,7 @@ public interface UserService extends UserDetailsService {
     FindResultDto changePassword(ChangePwDto changePwDto);
 
     String getEmailByName(String name);
-    LeaveResultDto deleteUser(String token);
+    Long deleteUser(String token);
 
     String updateName(UpdateNameDto updateNameDto);
 }

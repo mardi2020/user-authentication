@@ -5,10 +5,10 @@ import com.mardi2020.userservice.dto.request.JoinDto;
 import com.mardi2020.userservice.dto.request.UpdateNameDto;
 import com.mardi2020.userservice.dto.response.FindResultDto;
 import com.mardi2020.userservice.dto.response.JoinResultDto;
-import com.mardi2020.userservice.dto.response.LeaveResultDto;
 import com.mardi2020.userservice.dto.response.UserDto;
 import com.mardi2020.userservice.dto.response.UserInfoDto;
 import com.mardi2020.userservice.exception.UserNotFoundException;
+import com.mardi2020.userservice.kafka.KafkaProducer;
 import com.mardi2020.userservice.service.UserService;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -34,6 +34,8 @@ public class UserController {
 
     private final UserService userService;
 
+    private final KafkaProducer kafkaProducer;
+
     @PostMapping
     public ResponseEntity<JoinResultDto> joinUser(@RequestBody JoinDto joinDto) {
         try {
@@ -55,9 +57,10 @@ public class UserController {
     }
 
     @DeleteMapping
-    ResponseEntity<LeaveResultDto> leave(@RequestHeader(HttpHeaders.AUTHORIZATION) String token) {
-        LeaveResultDto leaveResultDto = userService.deleteUser(token);
-        return new ResponseEntity<>(leaveResultDto, HttpStatus.OK);
+    ResponseEntity<Long> leave(@RequestHeader(HttpHeaders.AUTHORIZATION) String token) {
+        Long userId = userService.deleteUser(token);
+        kafkaProducer.send("deleted-user", userId);
+        return ResponseEntity.status(HttpStatus.OK).body(userId);
     }
 
     @GetMapping("/all")

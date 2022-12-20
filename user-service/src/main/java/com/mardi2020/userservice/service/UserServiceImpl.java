@@ -134,7 +134,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public LeaveResultDto deleteUser(String token) {
+    public Long deleteUser(String token) {
         Long userId = getUserIdByToken(token);
         if (userId == null) {
             throw new UserNotFoundException("userId를 찾을 수 없습니다.");
@@ -146,10 +146,7 @@ public class UserServiceImpl implements UserService {
 
         userRepository.delete(user);
 
-        return LeaveResultDto.builder()
-                .email(user.getEmail())
-                .name(user.getName())
-                .build();
+        return userId;
     }
 
     @Override

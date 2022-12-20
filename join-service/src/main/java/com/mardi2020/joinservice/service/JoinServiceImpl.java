@@ -3,7 +3,6 @@ package com.mardi2020.joinservice.service;
 import com.mardi2020.joinservice.client.UserServiceClient;
 import com.mardi2020.joinservice.dto.request.JoinDto;
 import com.mardi2020.joinservice.dto.response.JoinResultDto;
-import com.mardi2020.joinservice.dto.response.LeaveResultDto;
 import com.mardi2020.joinservice.exception.EmailDuplicatedException;
 import com.mardi2020.joinservice.exception.NicknameDuplicatedException;
 import com.mardi2020.joinservice.exception.PasswordNotValidException;
@@ -44,16 +43,10 @@ public class JoinServiceImpl implements JoinService {
 
     @Override
     public void leave(String token) {
-        ResponseEntity<LeaveResultDto> result = userServiceClient.deleteUser(token);
+        ResponseEntity<String> result = userServiceClient.deleteUser(token);
 
         if (result.getStatusCode() != HttpStatus.OK) {
             throw new RuntimeException("회원 탈퇴에 실패했습니다.");
         }
-
-        String email = result.getBody().getEmail();
-        String name = result.getBody().getName();
-
-        joinRepository.deleteById(email);
-        joinRepository.deleteById(name);
     }
 }
