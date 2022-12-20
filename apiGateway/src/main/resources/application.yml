@@ -136,3 +136,13 @@ spring:
             - RemoveRequestHeader=Cookie
             - RewritePath=/user-manage-service/(?<segment>.*), /$\{segment}
             - AuthorizationHeaderFilter
+
+        - id: group-service
+          uri: lb://GROUP-SERVICE
+          predicates:
+            - Path=/group-service/**
+            - Method=GET,POST,DELETE
+          filters:
+            - RemoveRequestHeader=Cookie
+            - RewritePath=/group-service/(?<segment>.*), /$\{segment}
+            - AuthorizationHeaderFilter
