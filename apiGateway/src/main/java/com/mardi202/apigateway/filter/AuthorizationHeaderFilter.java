@@ -1,5 +1,8 @@
 package com.mardi202.apigateway.filter;
 
+import com.mardi202.apigateway.util.JwtUtils;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jwt;
 import io.jsonwebtoken.Jwts;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
@@ -19,8 +22,11 @@ public class AuthorizationHeaderFilter extends AbstractGatewayFilterFactory<Auth
 
     private final Environment env;
 
-    public AuthorizationHeaderFilter(Environment env) {
+    private final JwtUtils jwtUtils;
+
+    public AuthorizationHeaderFilter(Environment env, JwtUtils jwtUtils) {
         super(Config.class);
+        this.jwtUtils = jwtUtils;
         this.env = env;
     }
 
@@ -28,19 +34,20 @@ public class AuthorizationHeaderFilter extends AbstractGatewayFilterFactory<Auth
     public GatewayFilter apply(Config config) {
         return ((exchange, chain) -> {
             ServerHttpRequest request = exchange.getRequest();
-            log.info("[Request Headers]: " + request.getHeaders());
+            log.info("Request Headers: " + request.getHeaders());
             if (!request.getHeaders().containsKey(HttpHeaders.AUTHORIZATION)) {
-                return onError(exchange, "No authorization header");
+                return onError(exchange, "No token header");
             }
-
             String authorizationHeader = request.getHeaders().get(HttpHeaders.AUTHORIZATION).get(0);
-            log.error("[authorizationHeader] " + authorizationHeader);
             String token = authorizationHeader.replace("Bearer", "");
 
             if (!isJwtValid(token)) {
                 return onError(exchange, "JWT not valid");
             }
-            return chain.filter(exchange);
+            String subject = jwtUtils.getUserId(token);
+            ServerHttpRequest req = request.mutate().header("user-id", subject).build();
+
+            return chain.filter(exchange.mutate().request(req).build());
         });
     }
 

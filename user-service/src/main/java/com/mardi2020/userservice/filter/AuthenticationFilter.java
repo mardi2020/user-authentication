@@ -3,24 +3,27 @@ package com.mardi2020.userservice.filter;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mardi2020.userservice.dto.request.LoginDto;
 import com.mardi2020.userservice.dto.response.UserDto;
+import com.mardi2020.userservice.service.RefreshTokenService;
 import com.mardi2020.userservice.service.UserService;
 import com.mardi2020.userservice.service.UserServiceImpl.CustomUserDetails;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
+import com.mardi2020.userservice.util.CookieUtils;
+import com.mardi2020.userservice.util.JwtUtils;
 import java.io.IOException;
-import java.util.Collections;
-import java.util.Date;
+import java.text.SimpleDateFormat;
+import java.util.Map;
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.env.Environment;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseCookie;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
@@ -29,13 +32,15 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
     private final UserService userService;
 
+    private final RefreshTokenService refreshTokenService;
+
     private final Environment env;
 
-    public AuthenticationFilter(AuthenticationManager authenticationManager,
-                                UserService userService,
-                                Environment env) {
-        super.setAuthenticationManager(authenticationManager);
+    public AuthenticationFilter(AuthenticationManager authenticationManager, UserService userService,
+                                RefreshTokenService refreshTokenService, Environment env) {
+        super(authenticationManager);
         this.userService = userService;
+        this.refreshTokenService = refreshTokenService;
         this.env = env;
     }
 
@@ -43,18 +48,32 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain,
                                             Authentication authResult) throws IOException, ServletException {
 
+        CookieUtils cookieUtils = new CookieUtils(env);
+        JwtUtils jwtUtils = new JwtUtils(env);
+
         String email = ((CustomUserDetails) authResult.getPrincipal()).getUsername();
         UserDto user = userService.getUserByEmail(email);
-        String token = Jwts.builder()
-                .setSubject(user.getUserId().toString())
-                .claim("role", user.getRole())
-                .setExpiration(new Date(System.currentTimeMillis() +
-                        Long.parseLong(env.getProperty("token.expiration_time"))))
-                .signWith(SignatureAlgorithm.HS512, env.getProperty("token.secret"))
-                .compact();
+        String accessToken = jwtUtils.generateAccessToken(user.getUserId(), user.getRole());
+        String refreshToken = jwtUtils.generateRefreshToken();
 
-        response.addHeader("token", token);
-        response.addHeader("userId", user.getUserId().toString());
+        log.info("Access token : " + accessToken);
+        log.info("Refresh token : " + refreshToken);
+
+        refreshTokenService.updateRefreshToken(user.getUserId(), jwtUtils.getRefreshTokenId(refreshToken));
+
+        ResponseCookie resCookie = cookieUtils.createRefreshTokenCookie(refreshToken);
+        Cookie cookie = cookieUtils.of(resCookie);
+
+        response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+        response.addCookie(cookie);
+
+        Map<String, Object> token = Map.of(
+                "access-token", accessToken,
+                "expired-time", new SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
+                        .format(jwtUtils.getExpiredTime(accessToken))
+        );
+
+        new ObjectMapper().writeValue(response.getOutputStream(), token);
     }
 
     @Override

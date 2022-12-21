@@ -1,6 +1,7 @@
 package com.mardi2020.userservice.config;
 
 import com.mardi2020.userservice.filter.AuthenticationFilter;
+import com.mardi2020.userservice.service.RefreshTokenService;
 import com.mardi2020.userservice.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
@@ -21,16 +22,20 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
+    private final RefreshTokenService refreshTokenService;
+
     private final Environment env;
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.csrf().disable();
 
-        http.authorizeRequests().antMatchers("/**")
-                .permitAll()
+        http.authorizeRequests()
+                .anyRequest().permitAll()
                 .and()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                .and()
+                .logout().logoutUrl("/logout").deleteCookies("refresh-token")
                 .and()
                 .addFilter(getAuthenticationFilter());
 
@@ -38,7 +43,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
     private AuthenticationFilter getAuthenticationFilter() throws Exception {
-        return new AuthenticationFilter(authenticationManager(), userService, env);
+        return new AuthenticationFilter(authenticationManager(), userService, refreshTokenService, env);
     }
 
     @Override
