@@ -26,4 +26,6 @@ Smilegate dev camp 1인 프로젝트 저장소 - 인증 시스템
 
 [Cache 적용하기](https://velog.io/@mardi2020/Cache-%EC%A0%81%EC%9A%A9%ED%95%98%EA%B8%B0)
 
-[Kafka 적용하가](https://velog.io/@mardi2020/kafka-%EC%A0%81%EC%9A%A9%ED%95%98%EA%B8%B0)
+[Kafka 적용하기](https://velog.io/@mardi2020/kafka-%EC%A0%81%EC%9A%A9%ED%95%98%EA%B8%B0)
+
+[Refresh token 적용하기](https://velog.io/@mardi2020/JWT-access-token-refresh-token)
