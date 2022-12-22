@@ -1,3 +1,6 @@
+create database userDB;
+use userDB;
+
 create table users
 (
 	id bigint auto_increment
