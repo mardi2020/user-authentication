@@ -3,6 +3,7 @@ package com.mardi2020.userservice.config;
 import com.mardi2020.userservice.filter.AuthenticationFilter;
 import com.mardi2020.userservice.service.RefreshTokenService;
 import com.mardi2020.userservice.service.UserService;
+import javax.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
@@ -35,9 +36,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
-                .logout().logoutUrl("/logout").deleteCookies("refresh-token")
-                .and()
                 .addFilter(getAuthenticationFilter());
+
+        http.logout(logout -> logout.permitAll().logoutUrl("/logout").deleteCookies("refresh-token")
+                        .logoutSuccessHandler((request, response, authentication) -> {
+                            response.setStatus(HttpServletResponse.SC_OK);
+                        }));
 
         http.headers().frameOptions().disable();
     }

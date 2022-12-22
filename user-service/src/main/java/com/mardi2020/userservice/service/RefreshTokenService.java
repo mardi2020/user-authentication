@@ -39,7 +39,7 @@ public class RefreshTokenService {
     }
 
     @Transactional
-    public JwtTokenDto refreshJwtToken(String accessToken, String refreshToken) {
+    public JwtTokenDto reissueToken(String accessToken, String refreshToken) {
         String userId = jwtUtils.getUserId(accessToken.replace("Bearer", ""));
 
         TokenEntity targetToken = tokenRepository.findById(userId).orElseThrow(
@@ -67,12 +67,9 @@ public class RefreshTokenService {
                 .build();
     }
 
-    public void tokenByLogout(String accessToken) {
-        if (!jwtUtils.isValidToken(accessToken)) {
-            throw new AccessTokenNotValidException();
-        }
-
-        String userId = jwtUtils.getUserId(accessToken);
+    public void deleteTokenByLogout(String accessToken) {
+        String userId = jwtUtils.getUserId(accessToken.replace("Bearer", ""));
+        log.info(userId);
         TokenEntity refreshToken = tokenRepository.findById(userId).orElseThrow(
                 () -> new UserNotFoundException("저장된 정보가 존재하지 않습니다.")
         );
