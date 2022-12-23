@@ -133,6 +133,12 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public Long getUserIdByName(String name) {
+        UserEntity user = userRepository.findByName(name);
+        return user.getId();
+    }
+
+    @Override
     @Transactional
     public Long deleteUser(String token) {
         Long userId = getUserIdByToken(token);

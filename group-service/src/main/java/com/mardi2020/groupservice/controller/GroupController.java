@@ -41,16 +41,16 @@ public class GroupController {
     }
 
     @ApiOperation(value = "가입된 group 정보 보기")
-    @GetMapping("/{groupId}")
-    public ResponseEntity<?> getMyGroup(@PathVariable Long groupId) {
-        GroupInfoDto groupInfo = groupService.getGroupInfo(groupId);
+    @GetMapping("/{userId}")
+    public ResponseEntity<?> getMyGroup(@PathVariable Long userId) {
+        GroupInfoDto groupInfo = groupService.getGroupInfo(userId);
         return ResponseEntity.status(HttpStatus.OK).body(groupInfo);
     }
 
     @ApiOperation(value = "가입되어있는 group 탈퇴하기")
     @DeleteMapping("/{groupId}/{userId}")
     public ResponseEntity<?> leaveGroup(@PathVariable Long groupId, @PathVariable Long userId) {
-        groupService.leaveGroup(new LeaveGroupDto(userId, groupId));
+        groupService.leaveGroup(new LeaveGroupDto(groupId, userId));
         return ResponseEntity.status(HttpStatus.OK).body("delete success");
     }
 

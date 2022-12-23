@@ -58,6 +58,23 @@ public class InfoController {
         }
     }
 
+    @GetMapping("/id")
+    public ResponseEntity<?> getIdByName(@RequestParam String name) {
+        log.error("find info - " + name);
+        try {
+            String email = infoService.findId(name);
+            return new ResponseEntity<>(email, HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<UserDto> getUserInfoById(@RequestHeader(HttpHeaders.AUTHORIZATION) String token, @PathVariable Long id) {
+        UserDto userInfo = infoService.getUserInfoById(token, id);
+        return new ResponseEntity<>(userInfo, HttpStatus.OK);
+    }
+
     @GetMapping("/my/{id}")
     public ResponseEntity<UserDto> getMyInfo(@RequestHeader(HttpHeaders.AUTHORIZATION) String token,
                                              @PathVariable Long id) {

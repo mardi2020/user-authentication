@@ -22,6 +22,7 @@ public interface UserService extends UserDetailsService {
     FindResultDto changePassword(ChangePwDto changePwDto);
 
     String getEmailByName(String name);
+    Long getUserIdByName(String name);
     Long deleteUser(String token);
 
     String updateName(UpdateNameDto updateNameDto);

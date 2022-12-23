@@ -85,7 +85,7 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
             return getAuthenticationManager().authenticate(
                     new UsernamePasswordAuthenticationToken(user, creds.getPassword(), user.getAuthorities()));
         } catch (Exception e) {
-            throw new RuntimeException("[ERROR] LOGIN FAIL");
+            throw new RuntimeException("[ERROR] LOGIN FAIL", e);
         }
     }
 }

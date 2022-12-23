@@ -6,7 +6,7 @@ eureka:
     register-with-eureka: true
     fetch-registry: true
     service-url:
-      defaultZone: http://127.0.0.1:8761/eureka
+      defaultZone: http://localhost:8761/eureka
   instance:
     instance-id: ${spring.application.name}:${spring.application.instance_id:${random.value}}
 
@@ -24,10 +24,19 @@ spring:
   cloud:
     gateway:
       globalcors:
+        add-to-simple-url-handler-mapping: true
         cors-configurations:
           '[/**]':
             allowedOrigins: "http://localhost:3000"
-            allowdMethods:
+            allowCredentials: true
+            allowedHeaders:
+              - x-requested-with
+              - authorization
+              - content-type
+              - credential
+              - X-AUTH-TOKEN
+              - X-CSRF-TOKEN
+            allowedMethods:
               - POST
               - GET
               - PUT
@@ -45,7 +54,7 @@ spring:
           uri: lb://USER-SERVICE
           predicates:
             - Path=/user-service/login
-            - Method=POST
+            - Method=POST,OPTIONS
           filters:
             - RemoveRequestHeader=Cookie
             - RewritePath=/user-service/(?<segment>.*), /$\{segment}
@@ -54,7 +63,7 @@ spring:
           uri: lb://USER-SERVICE
           predicates:
             - Path=/user-service/logout
-            - Method=POST
+            - Method=POST,OPTIONS
           filters:
             - RemoveRequestHeader=Cookie
             - RewritePath=/user-service/(?<segment>.*), /$\{segment}
@@ -63,7 +72,7 @@ spring:
           uri: lb://USER-SERVICE
           predicates:
             - Path=/user-service/users
-            - Method=POST
+            - Method=POST,OPTIONS
           filters:
             - RemoveRequestHeader=Cookie
             - RewritePath=/user-service/(?<segment>.*), /$\{segment}
@@ -72,26 +81,31 @@ spring:
           uri: lb://USER-SERVICE
           predicates:
             - Path=/user-service/token/**
-            - Method=GET
+            - Method=GET,OPTIONS
           filters:
             - RewritePath=/user-service/(?<segment>.*), /$\{segment}
             - AuthorizationHeaderFilter
-
-        - id: user-service
-          uri: lb://USER-SERVICE
-          predicates:
-            - Path=/user-service/users/**
-            - Method=PUT
-          filters:
-            - RemoveRequestHeader=Cookie
-            - RewritePath=/user-service/(?<segment>.*), /$\{segment}
-            - AuthorizationHeaderFilter
-
         - id: user-service
           uri: lb://USER-SERVICE
           predicates:
             - Path=/user-service/users/email
-            - Method=GET
+            - Method=GET,OPTIONS
+          filters:
+            - RemoveRequestHeader=Cookie
+            - RewritePath=/user-service/(?<segment>.*), /$\{segment}
+        - id: user-service
+          uri: lb://USER-SERVICE
+          predicates:
+            - Path=/user-service/users/id
+            - Method=GET,OPTIONS
+          filters:
+            - RemoveRequestHeader=Cookie
+            - RewritePath=/user-service/(?<segment>.*), /$\{segment}
+        - id: user-service
+          uri: lb://USER-SERVICE
+          predicates:
+            - Path=/user-service/users/**
+            - Method=GET,PUT,OPTIONS
           filters:
             - RemoveRequestHeader=Cookie
             - RewritePath=/user-service/(?<segment>.*), /$\{segment}
@@ -101,7 +115,7 @@ spring:
           uri: lb://USER-SERVICE
           predicates:
             - Path=/user-service/users/all
-            - Method=GET
+            - Method=GET,OPTIONS
           filters:
             - RemoveRequestHeader=Cookie
             - RewritePath=/user-service/(?<segment>.*), /$\{segment}
@@ -112,7 +126,7 @@ spring:
           uri: lb://USER-SERVICE
           predicates:
             - Path=/user-service/users
-            - Method=DELETE,GET
+            - Method=DELETE,GET,OPTIONS
           filters:
             - RemoveRequestHeader=Cookie
             - RewritePath=/user-service/(?<segment>.*), /$\{segment}
@@ -122,7 +136,7 @@ spring:
           uri: lb://USER-SERVICE
           predicates:
             - Path=/user-service/status
-            - Method=GET
+            - Method=GET,OPTIONS
           filters:
             - RemoveRequestHeader=Cookie
             - RewritePath=/user-service/(?<segment>.*), /$\{segment}
@@ -131,7 +145,7 @@ spring:
           uri: lb://JOIN-SERVICE
           predicates:
             - Path=/join-service/join
-            - Method=POST
+            - Method=POST,OPTIONS
           filters:
             - RemoveRequestHeader=Cookie
             - RewritePath=/join-service/(?<segment>.*), /$\{segment}
@@ -140,7 +154,7 @@ spring:
           uri: lb://JOIN-SERVICE
           predicates:
             - Path=/join-service/leave
-            - Method=DELETE
+            - Method=DELETE,OPTIONS
           filters:
             - RemoveRequestHeader=Cookie
             - RewritePath=/join-service/(?<segment>.*), /$\{segment}
@@ -149,8 +163,24 @@ spring:
         - id: find-info-service
           uri: lb://FIND-INFO-SERVICE
           predicates:
+            - Path=/find-info-service/email
+            - Method=PATCH,GET,OPTIONS
+          filters:
+            - RemoveRequestHeader=Cookie
+            - RewritePath=/find-info-service/(?<segment>.*), /$\{segment}
+        - id: find-info-service
+          uri: lb://FIND-INFO-SERVICE
+          predicates:
+            - Path=/find-info-service/id
+            - Method=PATCH,GET,OPTIONS
+          filters:
+            - RemoveRequestHeader=Cookie
+            - RewritePath=/find-info-service/(?<segment>.*), /$\{segment}
+        - id: find-info-service
+          uri: lb://FIND-INFO-SERVICE
+          predicates:
             - Path=/find-info-service/**
-            - Method=PATCH,GET
+            - Method=PATCH,GET,OPTIONS
           filters:
             - RemoveRequestHeader=Cookie
             - RewritePath=/find-info-service/(?<segment>.*), /$\{segment}
@@ -160,7 +190,7 @@ spring:
           uri: lb://USER-MANAGE-SERVICE
           predicates:
             - Path=/user-manage-service/**
-            - Method=GET
+            - Method=GET,OPTIONS
           filters:
             - RemoveRequestHeader=Cookie
             - RewritePath=/user-manage-service/(?<segment>.*), /$\{segment}
@@ -170,7 +200,7 @@ spring:
           uri: lb://GROUP-SERVICE
           predicates:
             - Path=/group-service/**
-            - Method=GET,POST,DELETE
+            - Method=GET,POST,DELETE,OPTIONS
           filters:
             - RemoveRequestHeader=Cookie
             - RewritePath=/group-service/(?<segment>.*), /$\{segment}

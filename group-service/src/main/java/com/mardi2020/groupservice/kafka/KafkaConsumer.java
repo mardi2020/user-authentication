@@ -2,6 +2,7 @@ package com.mardi2020.groupservice.kafka;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mardi2020.groupservice.repository.GroupEntity;
 import com.mardi2020.groupservice.repository.GroupRepository;
@@ -28,17 +29,13 @@ public class KafkaConsumer {
 
     @KafkaListener(topics = "deleted-user")
     @Transactional
-    public void deleteUserInGroup(String kafkaMessage) {
+    public void deleteUserInGroup(String kafkaMessage) throws JsonProcessingException {
         log.info("[Kafka message] : " + kafkaMessage);
 
         Map<Object, Object> map = new HashMap<>();
-        try {
-            map = objectMapper.readValue(kafkaMessage, new TypeReference<Map<Object, Object>>() {});
-        } catch (JsonProcessingException e) {
-            e.printStackTrace();
-        }
-
-        GroupUsers groupUser = groupUsersRepository.findByUserId((Long) map.get("userId"));
+        JsonNode jsonNode = objectMapper.readTree(kafkaMessage);
+        Long userId = jsonNode.get("payload").get("userId").longValue();
+        GroupUsers groupUser = groupUsersRepository.findByUserId(userId);
         log.info("[User's Group ID] : " + groupUser.getGroupEntity().getId());
         if (groupUser.getGroupEntity() != null) {
             groupUsersRepository.delete(groupUser);

@@ -4,6 +4,7 @@ import com.mardi2020.userservice.dto.response.JwtTokenDto;
 import com.mardi2020.userservice.dto.response.RefreshTokenResponse;
 import com.mardi2020.userservice.service.AccessTokenService;
 import com.mardi2020.userservice.service.RefreshTokenService;
+import com.mardi2020.userservice.service.UserService;
 import com.mardi2020.userservice.util.CookieUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -26,6 +27,8 @@ public class AuthController {
 
     private final RefreshTokenService refreshTokenService;
 
+    private final UserService userService;
+
     private final CookieUtils cookieUtils;
 
     @GetMapping("/token/reissue")
@@ -47,9 +50,9 @@ public class AuthController {
     @GetMapping("/token/check")
     public ResponseEntity<?> checkAccessToken(@RequestHeader(HttpHeaders.AUTHORIZATION) String authorization) {
         accessTokenService.isValidAccessToken(authorization);
-
+        Long userId = userService.getUserIdByToken(authorization);
         return ResponseEntity.status(HttpStatus.OK)
-                .body("check access token");
+                .body(userId);
     }
 
     @PostMapping("/logout")

@@ -9,6 +9,7 @@ import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -21,6 +22,10 @@ public interface UserServiceClient {
     @Headers("Authorization: {token}")
     ResponseEntity<UserInfoDto> changePassword(@RequestHeader(HttpHeaders.AUTHORIZATION) String token,
                                                @RequestBody ChangePwDto changePwDto);
+    @GetMapping("/users/{id}")
+    @Headers("Authorization: {token}")
+    ResponseEntity<UserDto> getUserInfoById(@RequestHeader(HttpHeaders.AUTHORIZATION) String token,
+                                            @PathVariable("id") Long id);
 
     @PutMapping("/users/name")
     @Headers("Authorization: {token}")
@@ -30,7 +35,11 @@ public interface UserServiceClient {
     @GetMapping("/users/email")
     ResponseEntity<String> getEmail(@RequestParam String name);
 
+    @GetMapping("/users/id")
+    ResponseEntity<String> getId(@RequestParam String name);
+
     @GetMapping("/users")
     @Headers("Authorization: {token}")
     ResponseEntity<UserDto> getUserInfo(@RequestHeader(HttpHeaders.AUTHORIZATION) String token);
+
 }

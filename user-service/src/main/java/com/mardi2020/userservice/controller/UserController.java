@@ -18,6 +18,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -50,6 +51,16 @@ public class UserController {
     public ResponseEntity<?> getUserInfo(@RequestHeader(HttpHeaders.AUTHORIZATION) String token) {
         try {
             UserDto user = userService.getMyInfo(token);
+            return new ResponseEntity<>(user, HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>("token not valid", HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<?> getUserInfoById(@PathVariable("id") Long id) {
+        try {
+            UserDto user = userService.getUserByUserId(id);
             return new ResponseEntity<>(user, HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>("token not valid", HttpStatus.BAD_REQUEST);
@@ -91,6 +102,16 @@ public class UserController {
         try {
             String email = userService.getEmailByName(name);
             return new ResponseEntity<>(email, HttpStatus.OK);
+        } catch (UserNotFoundException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.OK);
+        }
+    }
+
+    @GetMapping("/id")
+    ResponseEntity<String> getId(@RequestParam String name) {
+        try {
+            Long userId = userService.getUserIdByName(name);
+            return new ResponseEntity<>(userId.toString(), HttpStatus.OK);
         } catch (UserNotFoundException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.OK);
         }

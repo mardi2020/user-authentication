@@ -10,6 +10,7 @@ import com.mardi2020.groupservice.repository.GroupRepository;
 import com.mardi2020.groupservice.repository.GroupUsers;
 import com.mardi2020.groupservice.repository.GroupUsersRepository;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -63,7 +64,7 @@ public class GroupService {
         GroupEntity groupEntity = groupRepository.findById(groupId).orElseThrow(
                 () -> new GroupNotFoundException("group이 존재하지 않습니다.")
         );
-        GroupUsers groupUser = groupUsersRepository.findByGroupEntityAndUserId(groupEntity, groupId);
+        GroupUsers groupUser = groupUsersRepository.findByGroupEntityAndUserId(groupEntity, leaveGroupDto.getUserId());
         groupUsersRepository.delete(groupUser);
 
         if (groupUsersRepository.countByGroupEntity(groupEntity) == 0) {
@@ -71,7 +72,12 @@ public class GroupService {
         }
     }
 
-    public GroupInfoDto getGroupInfo(Long groupId) {
+    public GroupInfoDto getGroupInfo(Long userId) {
+        Long groupId = Optional.ofNullable(groupUsersRepository.findByUserId(userId)).map(GroupUsers::getGroupEntity).map(GroupEntity::getId)
+                .orElseThrow(
+                        () -> new GroupNotFoundException("group not found")
+                );
+
         List<GroupUsers> groupUsers = groupUsersRepository.findAllByGroupId(groupId);
         GroupEntity group = groupRepository.findById(groupId).orElseThrow(
                 () -> new GroupNotFoundException("group not found")

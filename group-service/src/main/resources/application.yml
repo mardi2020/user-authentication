@@ -6,7 +6,7 @@ spring:
     name: group-service
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3307/groupDB?serverTimezone=Asia/Seoul
+    url: jdbc:mysql://localhost:3306/group-service?serverTimezone=Asia/Seoul
     username: root
     password: 1234
   jpa:

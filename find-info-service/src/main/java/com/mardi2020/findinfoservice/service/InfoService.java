@@ -11,7 +11,11 @@ public interface InfoService {
 
     String findEmail(String name);
 
+    String findId(String name);
+
     UserDto getUserInfo(String token, Long id);
+
+    UserDto getUserInfoById(String token, Long id);
 
     UserInfoDto updateUserName(String token, UpdateNameDto updateNameDto, Long id);
 }

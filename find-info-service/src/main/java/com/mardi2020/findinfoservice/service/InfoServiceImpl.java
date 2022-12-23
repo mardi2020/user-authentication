@@ -44,10 +44,30 @@ public class InfoServiceImpl implements InfoService {
         return email;
     }
 
+    @Override
+    public String findId(String name) {
+        ResponseEntity<String> result = userServiceClient.getId(name);
+        String email = result.getBody();
+        if (result.getStatusCode() != HttpStatus.OK || email == null) {
+            throw new NameNotFoundException("[ERROR] USER NOT FOUND");
+        }
+        return email;
+    }
+
     @Cacheable(key = "#id", cacheNames = "user", cacheManager = "cacheManager")
     @Override
     public UserDto getUserInfo(String token, Long id) {
         ResponseEntity<UserDto> userInfo = userServiceClient.getUserInfo(token);
+        if (userInfo.getStatusCode() != HttpStatus.OK) {
+            throw new NameNotFoundException("[ERROR] USER NOT FOUND");
+        }
+        return userInfo.getBody();
+    }
+
+    @Cacheable(key = "#id", cacheNames = "user", cacheManager = "cacheManager")
+    @Override
+    public UserDto getUserInfoById(String token, Long id) {
+        ResponseEntity<UserDto> userInfo = userServiceClient.getUserInfoById(token, id);
         if (userInfo.getStatusCode() != HttpStatus.OK) {
             throw new NameNotFoundException("[ERROR] USER NOT FOUND");
         }
