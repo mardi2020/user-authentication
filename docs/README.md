@@ -1,6 +1,8 @@
 # user-authentication
 Smilegate dev camp 1인 프로젝트 저장소 - 인증 시스템
 
+**코드 리뷰 관련한 내용은 issue를 확인해주세요!**
+
 ## 목차
 1. [개요](#-개요)
 
