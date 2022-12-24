@@ -22,7 +22,7 @@ Smilegate dev camp 1인 프로젝트 저장소 - 인증 시스템
 - language: Java11, JavaScript
 - framework: Spring boot 2.7.6, React
 - database: MySQL 8.0, Redis
-- devOps: Docker, k8s, kafka
+- devOps: Docker, Apache Kafka
 
 ### 💻 아키텍처
 #### BE Diagram
