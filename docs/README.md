@@ -17,16 +17,26 @@ Smilegate dev camp 1인 프로젝트 저장소 - 인증 시스템
 
 5. [기록](#-기술)
 
+6. [회고](#-회고)
+
 ### 👩🏻‍🔧 개요
 사용자 인증 시스템은 회원가입부터 내정보 관리, 관리자의 사용자 관리를 지원하는 웹 기반 시스템입니다. 또한, 사용자들을 그룹으로 묶어 관리할 수 있습니다.
 
-### 🛠 기술
-- language: Java11, JavaScript
-- framework: Spring boot 2.7.6, React
-- database: MySQL 8.0, Redis
-- devOps: Docker, Apache Kafka
+### 🖥️ 개발 환경
+<img src="https://img.shields.io/badge/macOS-000000?style=flat&logo=macOS&logoColor=white">
+<img src="https://img.shields.io/badge/GitHub-000000?style=flat&logo=GitHub&logoColor=white">
+<img src="https://img.shields.io/badge/intellij-000000?style=flat&logo=intellij IDEA&logoColor=white">
+<img src="https://img.shields.io/badge/WebStorm-000000?style=flat&logo=WebStorm&logoColor=white">
 
-### 💻 아키텍처
+### 🛠 기술
+| category  | name                                                                                                                                                                                            |
+|-----------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| language  | <img src="https://img.shields.io/badge/java 11-007396?style=flat&logo=java&logoColor=white"> <img src="https://img.shields.io/badge/javascript-F7DF1E?style=flat&logo=javascript&logoColor=black"> |
+| framework | <img src="https://img.shields.io/badge/springboot 2.7.6-6DB33F?style=flat&logo=springboot&logoColor=white"> <img src="https://img.shields.io/badge/react-61DAFB?style=flat&logo=react&logoColor=black"> |
+| database  | <img src="https://img.shields.io/badge/mysql 8.0-4479A1?style=flat&logo=mysql&logoColor=white"> <img src="https://img.shields.io/badge/redis-DC382D?style=flat&logo=redis&logoColor=white">                                                                                              |
+| devOps    | <img src="https://img.shields.io/badge/docker-2496ED?style=flat&logo=docker&logoColor=white"> <img src="https://img.shields.io/badge/Apache Kafka-231F20?style=flat&logo=Apache Kafka&logoColor=white">                                                                                                                                                                         |
+
+### 💡 아키텍처
 #### BE Diagram
 ![스크린샷 2022-12-24 오전 12 09 44](https://user-images.githubusercontent.com/58351498/209357577-e9c983e3-64d2-4313-ac97-b5c09e290a2a.png)
 
@@ -66,3 +76,7 @@ Smilegate dev camp 1인 프로젝트 저장소 - 인증 시스템
 [Dockerfile 작성하기(1)](https://velog.io/@mardi2020/Dockerfile-%EC%9E%91%EC%84%B1%ED%95%98%EA%B8%B0)
 
 [Dockerfile 작성하기(2)](https://velog.io/@mardi2020/Docker-image-%ED%81%AC%EA%B8%B0-%EC%A4%84%EC%97%AC%EB%B3%B4%EA%B8%B0)
+
+
+### ⏳ 회고
+[프로젝트 회고](https://velog.io/@mardi2020/%ED%9A%8C%EA%B3%A0)
