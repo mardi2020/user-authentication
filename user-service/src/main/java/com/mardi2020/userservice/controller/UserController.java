@@ -10,6 +10,7 @@ import com.mardi2020.userservice.dto.response.UserInfoDto;
 import com.mardi2020.userservice.exception.UserNotFoundException;
 import com.mardi2020.userservice.kafka.KafkaProducer;
 import com.mardi2020.userservice.service.UserService;
+import com.mardi2020.userservice.util.JwtUtils;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -37,6 +38,8 @@ public class UserController {
 
     private final KafkaProducer kafkaProducer;
 
+    private final JwtUtils jwtUtils;
+
     @PostMapping
     public ResponseEntity<JoinResultDto> joinUser(@RequestBody JoinDto joinDto) {
         try {
@@ -50,7 +53,8 @@ public class UserController {
     @GetMapping
     public ResponseEntity<?> getUserInfo(@RequestHeader(HttpHeaders.AUTHORIZATION) String token) {
         try {
-            UserDto user = userService.getMyInfo(token);
+            String userId = jwtUtils.getUserId(token.replace("Bearer", ""));
+            UserDto user = userService.getMyInfo(token, Long.valueOf(userId));
             return new ResponseEntity<>(user, HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>("token not valid", HttpStatus.BAD_REQUEST);
@@ -69,9 +73,10 @@ public class UserController {
 
     @DeleteMapping
     ResponseEntity<Long> leave(@RequestHeader(HttpHeaders.AUTHORIZATION) String token) {
-        Long userId = userService.deleteUser(token);
-        kafkaProducer.send("deleted-user", userId);
-        return ResponseEntity.status(HttpStatus.OK).body(userId);
+        String userId = jwtUtils.getUserId(token.replace("Bearer", ""));
+        Long id = userService.deleteUser(token, Long.valueOf(userId));
+        kafkaProducer.send("deleted-user", id);
+        return ResponseEntity.status(HttpStatus.OK).body(id);
     }
 
     @GetMapping("/all")
@@ -119,8 +124,7 @@ public class UserController {
 
     @PutMapping("/name")
     ResponseEntity<String> updateName(@RequestBody UpdateNameDto updateNameDto) {
-        log.info(updateNameDto.toString());
-        String name = userService.updateName(updateNameDto);
+        String name = userService.updateName(updateNameDto, updateNameDto.getId());
         return new ResponseEntity<>(name, HttpStatus.OK);
     }
 }

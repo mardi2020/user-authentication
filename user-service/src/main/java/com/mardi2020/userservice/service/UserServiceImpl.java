@@ -5,7 +5,6 @@ import com.mardi2020.userservice.dto.request.JoinDto;
 import com.mardi2020.userservice.dto.request.UpdateNameDto;
 import com.mardi2020.userservice.dto.response.FindResultDto;
 import com.mardi2020.userservice.dto.response.JoinResultDto;
-import com.mardi2020.userservice.dto.response.LeaveResultDto;
 import com.mardi2020.userservice.dto.response.UserDto;
 import com.mardi2020.userservice.dto.response.UserInfoDto;
 import com.mardi2020.userservice.exception.PasswordNotValidException;
@@ -19,6 +18,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.core.env.Environment;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.AuthorityUtils;
@@ -57,9 +58,10 @@ public class UserServiceImpl implements UserService {
         return JoinResultDto.setting(true, savedUser.getEmail() + " SUCCESS");
     }
 
+    @Cacheable(key = "#id", cacheNames = "user", cacheManager = "cacheManager")
     @Override
-    public UserDto getUserByUserId(Long userId) {
-        UserEntity user = userRepository.findById(userId).orElseThrow(
+    public UserDto getUserByUserId(Long id) {
+        UserEntity user = userRepository.findById(id).orElseThrow(
                 () -> new UserNotFoundException("[ERROR] USER NOT FOUND")
         );
         return new UserDto(user);
@@ -83,8 +85,8 @@ public class UserServiceImpl implements UserService {
             return null;
         }
     }
-
-    public UserDto getMyInfo(String token) {
+    @Cacheable(key = "#id", cacheNames = "user", cacheManager = "cacheManager")
+    public UserDto getMyInfo(String token, Long id) {
         Long userId = getUserIdByToken(token);
         if (userId == null) {
             throw new UserNotFoundException("userId를 찾을 수 없습니다.");
@@ -140,25 +142,22 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public Long deleteUser(String token) {
-        Long userId = getUserIdByToken(token);
-        if (userId == null) {
+    @CacheEvict(key = "#id", cacheNames = "user", cacheManager = "cacheManager")
+    public Long deleteUser(String token, Long id) {
+        if (id == null) {
             throw new UserNotFoundException("userId를 찾을 수 없습니다.");
         }
-        log.error(userId.toString());
-        UserEntity user = userRepository.findById(userId).orElseThrow(
+        UserEntity user = userRepository.findById(id).orElseThrow(
                 () -> new UserNotFoundException("user가 존재하지 않습니다.")
         );
-
         userRepository.delete(user);
-
-        return userId;
+        return id;
     }
 
     @Override
     @Transactional
-    public String updateName(UpdateNameDto updateNameDto) {
-        Long id = updateNameDto.getId();
+    @CacheEvict(key = "#id", cacheNames = "user", cacheManager = "cacheManager")
+    public String updateName(UpdateNameDto updateNameDto, Long id) {
         UserEntity user = userRepository.findById(id).orElseThrow(
                 () -> new UserNotFoundException("user not found")
         );
