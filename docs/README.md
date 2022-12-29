@@ -28,7 +28,7 @@ Smilegate dev camp 1인 프로젝트 저장소 - 인증 시스템
 
 ### 💡 아키텍처
 #### BE Diagram
-![스크린샷 2022-12-24 오전 12 09 44](https://user-images.githubusercontent.com/58351498/209357577-e9c983e3-64d2-4313-ac97-b5c09e290a2a.png)
+![스크린샷 2022-12-29 오후 8 35 02](https://user-images.githubusercontent.com/58351498/209945648-64451685-e3fb-4d4e-aeb8-570c41c8a113.png)
 
 #### Microservices
 ![내부 서비스 관계](https://user-images.githubusercontent.com/58351498/208632973-fd3fd046-9d73-44be-b2c8-fa20752fa8db.png)
