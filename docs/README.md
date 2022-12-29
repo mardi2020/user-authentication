@@ -3,28 +3,20 @@ Smilegate dev camp 1인 프로젝트 저장소 - 인증 시스템
 
 ## 목차
 1. [개요](#-개요)
-
 2. [사용 기술](#-기술)
-
 3. [아키텍처](#-아키텍처)
     - [Back-end diagram](#be-diagram)
     - [마이크로서비스 통신](#microservices)
     - [Database diagram](#db-diagrams)
-
 4. [화면 구성](#화면)
-
 5. [기록](#-기술)
-
 6. [회고](#-회고)
 
 ### 👩🏻‍🔧 개요
 사용자 인증 시스템은 회원가입부터 내정보 관리, 관리자의 사용자 관리를 지원하는 웹 기반 시스템입니다. 또한, 사용자들을 그룹으로 묶어 관리할 수 있습니다.
 
 ### 🖥️ 개발 환경
-<img src="https://img.shields.io/badge/macOS-000000?style=flat&logo=macOS&logoColor=white">
-<img src="https://img.shields.io/badge/GitHub-000000?style=flat&logo=GitHub&logoColor=white">
-<img src="https://img.shields.io/badge/intellij-000000?style=flat&logo=intellij IDEA&logoColor=white">
-<img src="https://img.shields.io/badge/WebStorm-000000?style=flat&logo=WebStorm&logoColor=white">
+<img src="https://img.shields.io/badge/macOS-000000?style=flat&logo=macOS&logoColor=white"> <img src="https://img.shields.io/badge/GitHub-000000?style=flat&logo=GitHub&logoColor=white"> <img src="https://img.shields.io/badge/intellij-000000?style=flat&logo=intellij IDEA&logoColor=white"> <img src="https://img.shields.io/badge/WebStorm-000000?style=flat&logo=WebStorm&logoColor=white">
 
 ### 🛠 기술
 | category  | name                                                                                                                                                                                            |
