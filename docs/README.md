@@ -31,7 +31,7 @@ Smilegate dev camp 1인 프로젝트 저장소 - 인증 시스템
 ![스크린샷 2022-12-29 오후 8 35 02](https://user-images.githubusercontent.com/58351498/209945648-64451685-e3fb-4d4e-aeb8-570c41c8a113.png)
 
 #### Microservices
-![내부 서비스 관계](https://user-images.githubusercontent.com/58351498/208632973-fd3fd046-9d73-44be-b2c8-fa20752fa8db.png)
+![스크린샷 2022-12-29 오후 8 50 54](https://user-images.githubusercontent.com/58351498/209947227-3308091f-ed6c-425e-b458-fdf16bf9a20d.png)
 
 #### DB Diagrams
 ![users](https://user-images.githubusercontent.com/58351498/208630845-87e4ac8e-e7eb-4157-8a58-1d1a4112db87.png)
