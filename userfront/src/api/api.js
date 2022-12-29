@@ -1,7 +1,6 @@
 import axios from "axios";
 
 const userServiceUrl = "http://localhost:8000/user-service";
-const findInfoService = "http://localhost:8000/find-info-service"
 const groupServiceUrl = "http://localhost:8000/group-service";
 const joinServiceUrl = "http://localhost:8000/join-service";
 const userManageServiceUrl = "http://localhost:8000/user-manage-service";
@@ -42,7 +41,7 @@ export const getMyInfo = async (token, setToken) => {
         withCredentials: true
     })
 
-    return await axios.get(findInfoService + `/my/${userId.data}`, {
+    return await axios.get(userServiceUrl + `/my/${userId.data}`, {
         headers: {
             ...getAuthHeader(realToken)
         },
@@ -55,7 +54,7 @@ export const getUserInfoByIds = async (token, setToken, ids) => {
     const userInfos = []
     for (let i = 0; i < ids.length ; i++ ) {
         const id = ids[i]
-        const userInfo = await axios.get(findInfoService + `/${id}`, {
+        const userInfo = await axios.get(userServiceUrl + `/${id}`, {
             headers: {
                 ...getAuthHeader(realToken)
             },
@@ -68,7 +67,7 @@ export const getUserInfoByIds = async (token, setToken, ids) => {
 
 export const changePassword = async (token, setToken, user, pw) => {
     const realToken = await checkTokenAndRefresh(token, setToken)
-    return await axios.patch(findInfoService + "/password", {
+    return await axios.patch(userServiceUrl + "/password", {
         email: user.email,
         password: pw,
         name: user.name
@@ -82,7 +81,7 @@ export const changePassword = async (token, setToken, user, pw) => {
 
 export const changeName = async (token, setToken, user, name) => {
     const realToken = await checkTokenAndRefresh(token, setToken)
-    return await axios.patch(findInfoService + "/name", {
+    return await axios.patch(userServiceUrl + "/name", {
         id: user.userId,
         name: name
     }, {
@@ -114,7 +113,7 @@ export const getAllUsers = async (token, setToken) => {
 }
 
 export const findUser = async (name) => {
-    return await axios.get(findInfoService + "/email", {
+    return await axios.get(userServiceUrl + "/email", {
         params: {
             name
         }
@@ -122,7 +121,7 @@ export const findUser = async (name) => {
 }
 
 export const findUserIdByName = async (name) => {
-    return await axios.get(findInfoService + "/id", {
+    return await axios.get(userServiceUrl + "/id", {
         params: {
             name
         }
