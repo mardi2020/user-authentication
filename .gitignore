@@ -35,4 +35,18 @@ out/
 
 ### VS Code ###
 .vscode/
-gradle/
+gradle/README.md
+/apiGateway/gradle/wrapper/gradle-wrapper.jar
+/eurekaDiscovery/gradle/wrapper/gradle-wrapper.jar
+/find-info-service/gradle/wrapper/gradle-wrapper.jar
+/gradle/wrapper/gradle-wrapper.jar
+/join-service/gradle/wrapper/gradle-wrapper.jar
+/user-manage-service/gradle/wrapper/gradle-wrapper.jar
+/user-service/gradle/wrapper/gradle-wrapper.jar
+/apiGateway/gradle/wrapper/gradle-wrapper.properties
+/eurekaDiscovery/gradle/wrapper/gradle-wrapper.properties
+/find-info-service/gradle/wrapper/gradle-wrapper.properties
+/gradle/wrapper/gradle-wrapper.properties
+/join-service/gradle/wrapper/gradle-wrapper.properties
+/user-manage-service/gradle/wrapper/gradle-wrapper.properties
+/user-service/gradle/wrapper/gradle-wrapper.properties

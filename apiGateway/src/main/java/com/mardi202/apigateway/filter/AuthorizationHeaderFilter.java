@@ -1,8 +1,6 @@
 package com.mardi202.apigateway.filter;
 
 import com.mardi202.apigateway.util.JwtUtils;
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jwt;
 import io.jsonwebtoken.Jwts;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
