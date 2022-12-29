@@ -160,32 +160,6 @@ spring:
             - RewritePath=/join-service/(?<segment>.*), /$\{segment}
             - AuthorizationHeaderFilter
 
-        - id: find-info-service
-          uri: lb://FIND-INFO-SERVICE
-          predicates:
-            - Path=/find-info-service/email
-            - Method=PATCH,GET,OPTIONS
-          filters:
-            - RemoveRequestHeader=Cookie
-            - RewritePath=/find-info-service/(?<segment>.*), /$\{segment}
-        - id: find-info-service
-          uri: lb://FIND-INFO-SERVICE
-          predicates:
-            - Path=/find-info-service/id
-            - Method=PATCH,GET,OPTIONS
-          filters:
-            - RemoveRequestHeader=Cookie
-            - RewritePath=/find-info-service/(?<segment>.*), /$\{segment}
-        - id: find-info-service
-          uri: lb://FIND-INFO-SERVICE
-          predicates:
-            - Path=/find-info-service/**
-            - Method=PATCH,GET,OPTIONS
-          filters:
-            - RemoveRequestHeader=Cookie
-            - RewritePath=/find-info-service/(?<segment>.*), /$\{segment}
-            - AuthorizationHeaderFilter
-
         - id: user-manage-service
           uri: lb://USER-MANAGE-SERVICE
           predicates:
