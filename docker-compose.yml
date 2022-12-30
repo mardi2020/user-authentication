@@ -47,22 +47,7 @@ services:
       - zookeeper
     networks:
       - myuser-network
-
-  find-info-service:
-    container_name: find
-    build:
-      context: ./find-info-service
-      dockerfile: Dockerfile
-    environment:
-      - eureka.client.serviceUrl.defaultZone=http://discovery:8761/eureka/
-      - spring.redis.host=my-redis
-    depends_on:
-      - discovery
-      - my-redis
-    restart: always
-    networks:
-      - myuser-network
-
+      
   user-service:
     container_name: user
     build:
